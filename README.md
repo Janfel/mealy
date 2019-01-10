@@ -1,3 +1,3 @@
 # mealy
 
-Mealy Machines
+Module for using Mealy Machines.

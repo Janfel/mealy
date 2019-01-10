@@ -19,9 +19,8 @@
 
 # endregion
 
-"""Mealy Machines"""
+"""Module for using Mealy Machines."""
 
-from .mealy import *
-from .node import *
+from .mealy import State, Path, mealy
 
 __version__ = "0.1.0"
