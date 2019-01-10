@@ -18,3 +18,12 @@
 # along with this program.  If not, see <http: //www.gnu.org/licenses/>.
 
 # endregion
+
+from typing import Any
+
+
+class State:
+    """State of Mealy Machine"""
+
+    def __init__(self, output: Any):
+        self.output = output
