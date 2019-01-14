@@ -27,8 +27,8 @@ from typing import Dict, Generic, Iterable, Iterator, Optional, Tuple, TypeVar
 __all__ = ["State", "Path", "MealyResult", "format_result"]
 
 
-T = TypeVar("T")  # pylint: disable=invalid-name
-O = TypeVar("O")  # pylint: disable=invalid-name
+T = TypeVar("T")  # Type of Σ # pylint: disable=invalid-name
+O = TypeVar("O")  # Type of Ω # pylint: disable=invalid-name
 
 
 @dataclass
@@ -63,7 +63,7 @@ class MealyResult(Generic[T, O]):  # pylint: disable=unsubscriptable-object
 
 
 class State:
-    """State of Mealy Machine."""
+    """State of Mealy Machine. The type of Q."""
 
     def __init__(self, name: str, paths: Optional[Iterable[Path]] = None) -> None:
         PathDict = Dict[T, Tuple[State, O]]  # pylint: disable=invalid-name
