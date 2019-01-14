@@ -21,6 +21,6 @@
 
 """Module for using Mealy Machines."""
 
-from .mealy import State, Path, mealy
+from .mealy import State, Path, mealy, format_mealy
 
 __version__ = "0.1.0"

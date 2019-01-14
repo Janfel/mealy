@@ -58,15 +58,21 @@ class State:
             result = None
         return result
 
+    def __str__(self) -> str:
+        return self.name
 
-def mealy(state: State, steps: Iterable[T]) -> Iterator[Tuple[State, O]]:
+
+def mealy(state: State, steps: Iterable[T]) -> Iterator[Tuple[str, State, O]]:
     """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
     for step in steps:
         tup: Optional[Tuple[State, O]] = state.walk(step)
         if tup:
-            state = tup[0]
-            yield tup
+            state, out = tup
+            yield (step, state, out)
         else:
             raise ValueError(
                 f"Can't take given steps. State {state.name} hasn't set a Path for Step {step}."
             )
+
+def format_mealy(outputs: Iterable[Tuple[str, State, O]]) -> str:
+    return "\n".join(f"{step} => {state} / {out}" for step, state, out in outputs)
