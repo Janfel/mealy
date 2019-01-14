@@ -24,7 +24,7 @@
 from dataclasses import dataclass
 from typing import Dict, Generic, Iterable, Iterator, Optional, Tuple, TypeVar
 
-__all__ = ["State", "Path"]
+__all__ = ["State", "Path", "MealyResult"]
 
 
 T = TypeVar("T")  # pylint: disable=invalid-name
