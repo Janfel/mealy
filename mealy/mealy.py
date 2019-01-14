@@ -22,7 +22,7 @@
 """Main module for mealy."""
 
 from collections import namedtuple
-from typing import Dict, Iterable, Iterator, Optional, Tuple, TypeVar
+from typing import Any, Dict, Iterable, Iterator, Optional, Tuple, TypeVar
 
 __all__ = ["State", "Path", "mealy", "format_mealy"]
 
@@ -52,7 +52,7 @@ class State:
         for path in paths:
             self.set_path(path)
 
-    def walk(self, step: T) -> Optional[Tuple[any, O]]:
+    def walk(self, step: T) -> Optional[Tuple[Any, O]]:
         """If a Path exists for this step, return the Paths destination and output."""
         result = None
         try:
@@ -64,8 +64,10 @@ class State:
     def __str__(self) -> str:
         return self.name
 
+
 MealyResult = namedtuple("MealyResult", ["step", "state", "out"])
 MealyResult.__str__ = lambda self: f"{self.step} => {self.state} / {self.out}"
+
 
 def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
     """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
@@ -79,7 +81,7 @@ def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
                 f"Can't take given steps. State {state.name} hasn't set a Path for Step {step}."
             )
 
+
 def format_mealy(outputs: Iterable[MealyResult]) -> str:
     return "\n".join(f"{step} => {state} / {out}" for step, state, out in outputs)
-
 
