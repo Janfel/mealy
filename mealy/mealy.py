@@ -45,6 +45,23 @@ class Path(Generic[T, O]):  # pylint: disable=unsubscriptable-object
     value: O
 
 
+@dataclass
+class MealyResult(Generic[T, O]):  # pylint: disable=unsubscriptable-object
+    """
+    The result of changing the state of the Mealy Machine.
+    step: The entry that lead to this path.
+    state: The new State resulting from this step.
+    out: The output produced by walking on this path.
+    """
+
+    step: T
+    state: "State"
+    out: O
+
+    def __str__(self) -> str:
+        return f"{self.step} => {self.state} / {self.out}"
+
+
 class State:
     """State of Mealy Machine."""
 
@@ -64,11 +81,12 @@ class State:
         for path in paths:
             self.set_path(path)
 
-    def walk(self, step: T) -> Optional[Tuple["State", O]]:
+    def step(self, step: T) -> Optional[MealyResult]:
         """If a Path exists for this step, return the Paths destination and output."""
         result = None
         try:
-            result = self.paths[step]
+            state, out = self.paths[step]
+            result = MealyResult(step, state, out)
         except KeyError:
             result = None
         return result
@@ -77,27 +95,10 @@ class State:
         return self.name
 
 
-@dataclass
-class MealyResult(Generic[T, O]):  # pylint: disable=unsubscriptable-object
-    """
-    The result of changing the state of the Mealy Machine.
-    step: The entry that lead to this path.
-    state: The new State resulting from this step.
-    out: The output produced by walking on this path.
-    """
-
-    step: T
-    state: State
-    out: O
-
-    def __str__(self) -> str:
-        return f"{self.step} => {self.state} / {self.out}"
-
-
 def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
     """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
     for step in steps:
-        tup: Optional[Tuple[State, O]] = state.walk(step)
+        tup: Optional[Tuple[State, O]] = state.step(step)
         if tup:
             state, out = tup
             yield MealyResult(step, state, out)
