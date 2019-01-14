@@ -21,7 +21,7 @@
 
 """Tests for mealy.mealy."""
 
-from mealy.mealy import State, Path, mealy
+from mealy.mealy import *
 
 
 def test_state():
@@ -71,6 +71,12 @@ def test_mealy():
     q2.set_paths([Path("R", q3, "0°"), Path("U", q0, "270°")])
     q3.set_paths([Path("L", q2, "180°"), Path("U", q1, "270°")])
 
-    expected = [(q1, "0°"), (q3, "90°"), (q1, "270°"), (q0, "180°"), (q2, "90°")]
-    result = list(mealy(q0, "RDULD"))
+    expected = [
+        MealyResult("R", q1, "0°"),
+        MealyResult("D", q3, "90°"),
+        MealyResult("U", q1, "270°"),
+        MealyResult("L", q0, "180°"),
+        MealyResult("D", q2, "90°"),
+    ]
+    result = list(q0.walk("RDULD"))
     assert result == expected
