@@ -21,7 +21,7 @@
 
 """Tests for mealy.mealy."""
 
-from mealy.mealy import *
+from mealy.mealy import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
 
 def test_state():
