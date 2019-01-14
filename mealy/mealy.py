@@ -21,8 +21,8 @@
 
 """Main module for mealy."""
 
-from collections import namedtuple
-from typing import Any, Dict, Iterable, Iterator, Optional, Tuple, TypeVar
+from dataclasses import dataclass
+from typing import Dict, Generic, Iterable, Iterator, Optional, Tuple, TypeVar
 
 __all__ = ["State", "Path", "mealy", "format_mealy"]
 
@@ -30,7 +30,19 @@ __all__ = ["State", "Path", "mealy", "format_mealy"]
 T = TypeVar("T")  # pylint: disable=invalid-name
 O = TypeVar("O")  # pylint: disable=invalid-name
 
-Path = namedtuple("Path", ["step", "dest", "value"])
+
+@dataclass
+class Path(Generic[T, O]):  # pylint: disable=unsubscriptable-object
+    """
+    Path from one State to another.
+    step: The entry to take.
+    dest: The resulting State.
+    value: The Paths output.
+    """
+
+    step: T
+    dest: "State"
+    value: O
 
 
 class State:
@@ -52,7 +64,7 @@ class State:
         for path in paths:
             self.set_path(path)
 
-    def walk(self, step: T) -> Optional[Tuple[Any, O]]:
+    def walk(self, step: T) -> Optional[Tuple["State", O]]:
         """If a Path exists for this step, return the Paths destination and output."""
         result = None
         try:
@@ -65,8 +77,21 @@ class State:
         return self.name
 
 
-MealyResult = namedtuple("MealyResult", ["step", "state", "out"])
-MealyResult.__str__ = lambda self: f"{self.step} => {self.state} / {self.out}"
+@dataclass
+class MealyResult(Generic[T, O]):  # pylint: disable=unsubscriptable-object
+    """
+    The result of changing the state of the Mealy Machine.
+    step: The entry that lead to this path.
+    state: The new State resulting from this step.
+    out: The output produced by walking on this path.
+    """
+
+    step: T
+    state: State
+    out: O
+
+    def __str__(self) -> str:
+        return f"{self.step} => {self.state} / {self.out}"
 
 
 def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
@@ -84,4 +109,3 @@ def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
 
 def format_mealy(outputs: Iterable[MealyResult]) -> str:
     return "\n".join(f"{step} => {state} / {out}" for step, state, out in outputs)
-
