@@ -64,18 +64,22 @@ class State:
     def __str__(self) -> str:
         return self.name
 
+MealyResult = namedtuple("MealyResult", ["step", "state", "out"])
+MealyResult.__str__ = lambda self: f"{self.step} => {self.state} / {self.out}"
 
-def mealy(state: State, steps: Iterable[T]) -> Iterator[Tuple[str, State, O]]:
+def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
     """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
     for step in steps:
         tup: Optional[Tuple[State, O]] = state.walk(step)
         if tup:
             state, out = tup
-            yield (step, state, out)
+            yield MealyResult(step, state, out)
         else:
             raise ValueError(
                 f"Can't take given steps. State {state.name} hasn't set a Path for Step {step}."
             )
 
-def format_mealy(outputs: Iterable[Tuple[str, State, O]]) -> str:
+def format_mealy(outputs: Iterable[MealyResult]) -> str:
     return "\n".join(f"{step} => {state} / {out}" for step, state, out in outputs)
+
+
