@@ -1,4 +1,5 @@
-from mealy import State, Path
+from mealy import State, Path, format_result
+
 
 def test_mealy():
     """
@@ -24,8 +25,8 @@ def test_mealy():
     q3.set_paths([Path("L", q2, "180°"), Path("U", q1, "270°")])
 
     result = list(q0.walk("RDULD"))
-    for r in result:
-        print(r)
+    print(format_result(result))
+
 
 if __name__ == "__main__":
     test_mealy()

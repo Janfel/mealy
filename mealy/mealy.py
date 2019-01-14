@@ -24,7 +24,7 @@
 from dataclasses import dataclass
 from typing import Dict, Generic, Iterable, Iterator, Optional, Tuple, TypeVar
 
-__all__ = ["State", "Path", "MealyResult"]
+__all__ = ["State", "Path", "MealyResult", "format_result"]
 
 
 T = TypeVar("T")  # pylint: disable=invalid-name
@@ -106,3 +106,17 @@ class State:
 
     def __str__(self) -> str:
         return self.name
+
+
+def format_result(result: Iterator[MealyResult]) -> str:
+    """
+    Brings the result of an iteration in a human-readable form.
+    The resulting formatting will look like this, for every step taken.
+
+    Σ => Q / Ω
+
+    Example:
+
+    D => q3 / 90°
+    """
+    return "\n".join(map(str, result))
