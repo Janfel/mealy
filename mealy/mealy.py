@@ -24,7 +24,7 @@
 from dataclasses import dataclass
 from typing import Dict, Generic, Iterable, Iterator, Optional, Tuple, TypeVar
 
-__all__ = ["State", "Path", "mealy", "format_mealy"]
+__all__ = ["State", "Path"]
 
 
 T = TypeVar("T")  # pylint: disable=invalid-name
@@ -49,7 +49,7 @@ class Path(Generic[T, O]):  # pylint: disable=unsubscriptable-object
 class MealyResult(Generic[T, O]):  # pylint: disable=unsubscriptable-object
     """
     The result of changing the state of the Mealy Machine.
-    step: The entry that lead to this path.
+    step: The step that lead to this path.
     state: The new State resulting from this step.
     out: The output produced by walking on this path.
     """
@@ -91,22 +91,18 @@ class State:
             result = None
         return result
 
+    def walk(self, steps: Iterable[T]) -> Iterator[MealyResult]:
+        """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
+        state = self
+        for step in steps:
+            result: Optional[MealyResult] = state.step(step)
+            if result:
+                state = result.state
+                yield result
+            else:
+                raise ValueError(
+                    f"Can't take given steps. State {state.name} hasn't set a Path for Step {step}."
+                )
+
     def __str__(self) -> str:
         return self.name
-
-
-def mealy(state: State, steps: Iterable[T]) -> Iterator[MealyResult]:
-    """Walk the given steps on the Mealy Machine and yield all steps and produced outputs."""
-    for step in steps:
-        tup: Optional[Tuple[State, O]] = state.step(step)
-        if tup:
-            state, out = tup
-            yield MealyResult(step, state, out)
-        else:
-            raise ValueError(
-                f"Can't take given steps. State {state.name} hasn't set a Path for Step {step}."
-            )
-
-
-def format_mealy(outputs: Iterable[MealyResult]) -> str:
-    return "\n".join(f"{step} => {state} / {out}" for step, state, out in outputs)
